@@ -1,0 +1,66 @@
+{
+  "action.cancel": "Cancel",
+  "action.close": "Close",
+  "action.submit": "Submit",
+  "action.sending": "Sending…",
+  "action.send": "Send",
+  "action.retry": "Retry",
+  "action.notNow": "Not now",
+  "action.upvote": "Upvote",
+  "action.upvoted": "Upvoted",
+
+  "compose.title": "Send feedback",
+  "compose.placeholder.title": "Title",
+  "compose.placeholder.description": "Tell us more (optional)",
+  "compose.error.titleEmpty": "Please enter a title.",
+  "compose.error.notConfigured": "Feddy is not configured.",
+  "compose.error.submitFailed": "Submit failed. Please try again.",
+  "compose.thanks": "Thanks for the feedback",
+
+  "attachment.add": "Add attachment",
+  "attachment.remove": "Remove attachment",
+  "attachment.label": "Photo",
+
+  "list.title": "Feedback",
+  "list.filter.all": "All",
+  "list.filter.allBoards": "All boards",
+  "list.empty.title": "No feedback yet",
+  "list.empty.body": "Tap ＋ to share an idea or report a bug.",
+  "list.error": "Failed to load. Try again.",
+  "list.loadingMore": "Loading more…",
+
+  "detail.officialReply": "OFFICIAL REPLY",
+  "detail.attachments": "ATTACHMENTS",
+  "detail.comments": "COMMENTS",
+  "detail.comments.empty": "No comments yet. Be the first.",
+  "detail.comments.loadMore": "Load more comments",
+  "detail.comment.placeholder": "Add a comment…",
+  "detail.comment.failed": "Could not send comment",
+  "detail.vote.failed": "Vote failed",
+  "detail.tryAgain": "Try again in a moment.",
+
+  "roadmap.title": "Roadmap",
+  "roadmap.empty.titleFormat": "No {status} items yet",
+  "roadmap.empty.body": "Check back soon — we'll update the roadmap as work progresses.",
+
+  "smartReview.title": "Enjoying the app?",
+  "smartReview.subtitle": "Tap a star to share your experience.",
+  "smartReview.star.a11y": "Rate {n} of 5 stars",
+
+  "status.planned": "Planned",
+  "status.in_progress": "In Progress",
+  "status.completed": "Completed",
+  "status.pending": "Pending",
+  "status.reviewed": "Reviewed",
+  "status.rejected": "Rejected",
+  "status.duplicate": "Duplicate",
+
+  "board.features": "Feature Requests",
+  "board.bugs": "Bug Reports",
+
+  "time.justNow": "just now",
+  "time.secondsAgo": "{n}s ago",
+  "time.minutesAgo": "{n}m ago",
+  "time.hoursAgo": "{n}h ago",
+  "time.daysAgo": "{n}d ago"
+}

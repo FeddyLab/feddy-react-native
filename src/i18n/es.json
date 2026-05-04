@@ -1,0 +1,66 @@
+{
+  "action.cancel": "Cancelar",
+  "action.close": "Cerrar",
+  "action.submit": "Enviar",
+  "action.sending": "Enviando…",
+  "action.send": "Enviar",
+  "action.retry": "Reintentar",
+  "action.notNow": "Ahora no",
+  "action.upvote": "Votar",
+  "action.upvoted": "Votado",
+
+  "compose.title": "Enviar comentario",
+  "compose.placeholder.title": "Título",
+  "compose.placeholder.description": "Cuéntanos más (opcional)",
+  "compose.error.titleEmpty": "Por favor, introduce un título.",
+  "compose.error.notConfigured": "Feddy no está configurado.",
+  "compose.error.submitFailed": "Error al enviar. Inténtalo de nuevo.",
+  "compose.thanks": "Gracias por tus comentarios",
+
+  "attachment.add": "Añadir adjunto",
+  "attachment.remove": "Eliminar adjunto",
+  "attachment.label": "Foto",
+
+  "list.title": "Comentarios",
+  "list.filter.all": "Todos",
+  "list.filter.allBoards": "Todos los tableros",
+  "list.empty.title": "Aún no hay comentarios",
+  "list.empty.body": "Pulsa ＋ para compartir una idea o reportar un error.",
+  "list.error": "No se pudo cargar. Inténtalo de nuevo.",
+  "list.loadingMore": "Cargando más…",
+
+  "detail.officialReply": "RESPUESTA OFICIAL",
+  "detail.attachments": "ADJUNTOS",
+  "detail.comments": "COMENTARIOS",
+  "detail.comments.empty": "Aún no hay comentarios. Sé el primero.",
+  "detail.comments.loadMore": "Cargar más comentarios",
+  "detail.comment.placeholder": "Añade un comentario…",
+  "detail.comment.failed": "No se pudo enviar el comentario",
+  "detail.vote.failed": "Error al votar",
+  "detail.tryAgain": "Inténtalo de nuevo en un momento.",
+
+  "roadmap.title": "Hoja de ruta",
+  "roadmap.empty.titleFormat": "Aún no hay elementos en {status}",
+  "roadmap.empty.body": "Vuelve pronto — actualizaremos la hoja de ruta a medida que avancemos.",
+
+  "smartReview.title": "¿Te gusta la app?",
+  "smartReview.subtitle": "Toca una estrella para compartir tu experiencia.",
+  "smartReview.star.a11y": "Valorar {n} de 5 estrellas",
+
+  "status.planned": "Planeado",
+  "status.in_progress": "En curso",
+  "status.completed": "Completado",
+  "status.pending": "Pendiente",
+  "status.reviewed": "Revisado",
+  "status.rejected": "Rechazado",
+  "status.duplicate": "Duplicado",
+
+  "board.features": "Solicitudes de funciones",
+  "board.bugs": "Informes de errores",
+
+  "time.justNow": "ahora mismo",
+  "time.secondsAgo": "hace {n}s",
+  "time.minutesAgo": "hace {n}m",
+  "time.hoursAgo": "hace {n}h",
+  "time.daysAgo": "hace {n}d"
+}

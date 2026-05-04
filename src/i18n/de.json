@@ -1,0 +1,66 @@
+{
+  "action.cancel": "Abbrechen",
+  "action.close": "Schließen",
+  "action.submit": "Senden",
+  "action.sending": "Senden…",
+  "action.send": "Senden",
+  "action.retry": "Erneut versuchen",
+  "action.notNow": "Nicht jetzt",
+  "action.upvote": "Hochwählen",
+  "action.upvoted": "Hochgewählt",
+
+  "compose.title": "Feedback senden",
+  "compose.placeholder.title": "Titel",
+  "compose.placeholder.description": "Erzähl uns mehr (optional)",
+  "compose.error.titleEmpty": "Bitte gib einen Titel ein.",
+  "compose.error.notConfigured": "Feddy ist nicht konfiguriert.",
+  "compose.error.submitFailed": "Senden fehlgeschlagen. Bitte versuche es erneut.",
+  "compose.thanks": "Danke für dein Feedback",
+
+  "attachment.add": "Anhang hinzufügen",
+  "attachment.remove": "Anhang entfernen",
+  "attachment.label": "Foto",
+
+  "list.title": "Feedback",
+  "list.filter.all": "Alle",
+  "list.filter.allBoards": "Alle Boards",
+  "list.empty.title": "Noch kein Feedback",
+  "list.empty.body": "Tippe auf ＋, um eine Idee oder einen Fehler zu teilen.",
+  "list.error": "Laden fehlgeschlagen. Bitte erneut versuchen.",
+  "list.loadingMore": "Mehr laden…",
+
+  "detail.officialReply": "OFFIZIELLE ANTWORT",
+  "detail.attachments": "ANHÄNGE",
+  "detail.comments": "KOMMENTARE",
+  "detail.comments.empty": "Noch keine Kommentare. Sei der Erste.",
+  "detail.comments.loadMore": "Mehr Kommentare laden",
+  "detail.comment.placeholder": "Kommentar hinzufügen…",
+  "detail.comment.failed": "Kommentar konnte nicht gesendet werden",
+  "detail.vote.failed": "Abstimmung fehlgeschlagen",
+  "detail.tryAgain": "Versuche es in einem Moment erneut.",
+
+  "roadmap.title": "Roadmap",
+  "roadmap.empty.titleFormat": "Noch keine {status}-Einträge",
+  "roadmap.empty.body": "Schau bald wieder rein — wir aktualisieren die Roadmap, sobald wir Fortschritte machen.",
+
+  "smartReview.title": "Gefällt dir die App?",
+  "smartReview.subtitle": "Tippe einen Stern, um deine Erfahrung zu teilen.",
+  "smartReview.star.a11y": "{n} von 5 Sternen bewerten",
+
+  "status.planned": "Geplant",
+  "status.in_progress": "In Bearbeitung",
+  "status.completed": "Abgeschlossen",
+  "status.pending": "Ausstehend",
+  "status.reviewed": "Geprüft",
+  "status.rejected": "Abgelehnt",
+  "status.duplicate": "Duplikat",
+
+  "board.features": "Funktionswünsche",
+  "board.bugs": "Fehlerberichte",
+
+  "time.justNow": "gerade eben",
+  "time.secondsAgo": "vor {n}s",
+  "time.minutesAgo": "vor {n}m",
+  "time.hoursAgo": "vor {n}h",
+  "time.daysAgo": "vor {n}T"
+}

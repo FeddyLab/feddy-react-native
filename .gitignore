@@ -7,10 +7,13 @@ yarn-error.log*
 .npm
 
 ## Build
-lib/
 dist/
+lib/
 build/
 *.tsbuildinfo
+
+## Test / coverage
+coverage/
 
 ## iOS (for bridged native module)
 ios/Pods/
@@ -37,7 +40,15 @@ android/local.properties
 ## Env
 .env
 .env.local
+.env.*.local
 
 ## Expo
 .expo/
 .expo-shared/
+Examples/*/node_modules/
+Examples/*/.expo/
+Examples/*/dist/
+Examples/*/web-build/
+
+## Editor schemes (per feddy-sdk-design — never commit Xcode/IDE schemes)
+xcshareddata/xcschemes/

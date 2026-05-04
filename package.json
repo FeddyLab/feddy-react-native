@@ -1,0 +1,93 @@
+{
+  "name": "@feddyapp/react-native",
+  "version": "0.1.0",
+  "description": "React Native SDK for Feddy — feedback infrastructure for mobile apps",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check src",
+    "lint:fix": "biome check --write src",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "prepublishOnly": "pnpm clean && pnpm typecheck && pnpm lint && pnpm test && pnpm build"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "react-native",
+    "feedback",
+    "feddy",
+    "sdk",
+    "mobile",
+    "ios",
+    "android",
+    "expo"
+  ],
+  "homepage": "https://feddy.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FeddyLab/feddy-react-native.git"
+  },
+  "bugs": {
+    "url": "https://github.com/FeddyLab/feddy-react-native/issues"
+  },
+  "author": "FeddyLab <admin@feddy.app>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "peerDependencies": {
+    "@react-native-async-storage/async-storage": ">=1.21.0",
+    "expo-application": "*",
+    "expo-device": "*",
+    "expo-image-manipulator": "*",
+    "expo-image-picker": "*",
+    "expo-localization": "*",
+    "expo-store-review": "*",
+    "react": ">=18.0.0",
+    "react-native": ">=0.73.0",
+    "react-native-safe-area-context": ">=4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "expo-application": {
+      "optional": true
+    },
+    "expo-device": {
+      "optional": true
+    },
+    "expo-image-manipulator": {
+      "optional": true
+    },
+    "expo-image-picker": {
+      "optional": true
+    },
+    "expo-localization": {
+      "optional": true
+    },
+    "expo-store-review": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.14",
+    "@react-native-async-storage/async-storage": "^3.0.2",
+    "@types/react": "^19.2.14",
+    "react": "^19.2.5",
+    "react-native": "^0.85.2",
+    "react-native-safe-area-context": "^5.7.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.5"
+  }
+}

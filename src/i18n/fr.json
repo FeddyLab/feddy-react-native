@@ -1,0 +1,66 @@
+{
+  "action.cancel": "Annuler",
+  "action.close": "Fermer",
+  "action.submit": "Envoyer",
+  "action.sending": "Envoi…",
+  "action.send": "Envoyer",
+  "action.retry": "Réessayer",
+  "action.notNow": "Pas maintenant",
+  "action.upvote": "Voter",
+  "action.upvoted": "Voté",
+
+  "compose.title": "Envoyer un retour",
+  "compose.placeholder.title": "Titre",
+  "compose.placeholder.description": "Dites-nous-en plus (optionnel)",
+  "compose.error.titleEmpty": "Veuillez saisir un titre.",
+  "compose.error.notConfigured": "Feddy n'est pas configuré.",
+  "compose.error.submitFailed": "Échec de l'envoi. Veuillez réessayer.",
+  "compose.thanks": "Merci pour votre retour",
+
+  "attachment.add": "Ajouter une pièce jointe",
+  "attachment.remove": "Supprimer la pièce jointe",
+  "attachment.label": "Photo",
+
+  "list.title": "Retours",
+  "list.filter.all": "Tous",
+  "list.filter.allBoards": "Tous les tableaux",
+  "list.empty.title": "Aucun retour pour le moment",
+  "list.empty.body": "Appuyez sur ＋ pour partager une idée ou signaler un bug.",
+  "list.error": "Échec du chargement. Réessayez.",
+  "list.loadingMore": "Chargement…",
+
+  "detail.officialReply": "RÉPONSE OFFICIELLE",
+  "detail.attachments": "PIÈCES JOINTES",
+  "detail.comments": "COMMENTAIRES",
+  "detail.comments.empty": "Aucun commentaire. Soyez le premier.",
+  "detail.comments.loadMore": "Charger plus de commentaires",
+  "detail.comment.placeholder": "Ajouter un commentaire…",
+  "detail.comment.failed": "Impossible d'envoyer le commentaire",
+  "detail.vote.failed": "Échec du vote",
+  "detail.tryAgain": "Réessayez dans un instant.",
+
+  "roadmap.title": "Feuille de route",
+  "roadmap.empty.titleFormat": "Aucun élément {status} pour le moment",
+  "roadmap.empty.body": "Revenez bientôt — la feuille de route sera mise à jour au fil de notre progression.",
+
+  "smartReview.title": "Vous aimez l'application ?",
+  "smartReview.subtitle": "Appuyez sur une étoile pour partager votre expérience.",
+  "smartReview.star.a11y": "Noter {n} sur 5 étoiles",
+
+  "status.planned": "Planifié",
+  "status.in_progress": "En cours",
+  "status.completed": "Terminé",
+  "status.pending": "En attente",
+  "status.reviewed": "Examiné",
+  "status.rejected": "Rejeté",
+  "status.duplicate": "Doublon",
+
+  "board.features": "Demandes de fonctionnalités",
+  "board.bugs": "Rapports de bugs",
+
+  "time.justNow": "à l'instant",
+  "time.secondsAgo": "il y a {n}s",
+  "time.minutesAgo": "il y a {n}m",
+  "time.hoursAgo": "il y a {n}h",
+  "time.daysAgo": "il y a {n}j"
+}
