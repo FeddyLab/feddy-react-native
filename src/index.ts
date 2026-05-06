@@ -13,6 +13,7 @@ import {
 import { getCurrentClient, setCurrentClient } from './runtime';
 import type { RequestReviewOptions } from './smart-review';
 import * as smartReview from './smart-review';
+import { clearQueue, enqueueSubmit, replayQueue } from './submit-queue';
 import {
   clearAutoDetectedSubscription,
   clearStoredSubscription,
@@ -162,6 +163,12 @@ export const Feddy = {
           }
         })();
       }
+      // Drain any submits that failed to reach the server during a
+      // previous launch (kill while offline, server outage, etc).
+      // Fire-and-forget; failures are logged inside replayQueue.
+      void replayQueue(client).catch((err) => {
+        logError('configure.replayQueue', err);
+      });
     } catch (err) {
       logError('configure', err);
     }
@@ -245,41 +252,57 @@ export const Feddy = {
       return;
     }
     void (async () => {
-      try {
-        // Upload attachments first (≤3, sequential) — failures are
-        // skipped, the request still creates with whichever uploaded.
-        const attachmentKeys: string[] = [];
-        if (opts.imageUris && opts.imageUris.length > 0) {
-          for (const uri of opts.imageUris.slice(0, 3)) {
-            try {
-              const key = await uploadAttachment(client, uri);
-              attachmentKeys.push(key);
-            } catch (err) {
-              console.error(
-                '[Feddy] attachment upload failed — skipping one image:',
-                err instanceof Error ? err.message : err
-              );
-            }
+      // Upload attachments first (≤3, sequential) — failures are
+      // skipped, the request still creates with whichever uploaded.
+      const attachmentKeys: string[] = [];
+      if (opts.imageUris && opts.imageUris.length > 0) {
+        for (const uri of opts.imageUris.slice(0, 3)) {
+          try {
+            const key = await uploadAttachment(client, uri);
+            attachmentKeys.push(key);
+          } catch (err) {
+            console.error(
+              '[Feddy] attachment upload failed — skipping one image:',
+              err instanceof Error ? err.message : err
+            );
           }
         }
+      }
 
-        const externalUserId = await getLastExternalUserId();
-        const anonymousToken =
-          externalUserId == null ? await getAnonymousToken() : undefined;
-        const trimmedDescription = opts.description?.trim();
-        await client.post('/v1/requests', {
-          external_user_id: externalUserId ?? undefined,
-          anonymous_token: anonymousToken,
-          title: trimmed,
-          description:
-            trimmedDescription && trimmedDescription.length > 0
-              ? trimmedDescription
-              : undefined,
-          board_key: opts.boardKey,
-          attachment_keys:
-            attachmentKeys.length > 0 ? attachmentKeys : undefined,
-        });
+      const externalUserId = await getLastExternalUserId();
+      const anonymousToken =
+        externalUserId == null ? await getAnonymousToken() : undefined;
+      const trimmedDescription = opts.description?.trim();
+      const body: Record<string, unknown> = {
+        external_user_id: externalUserId ?? undefined,
+        anonymous_token: anonymousToken,
+        title: trimmed,
+        description:
+          trimmedDescription && trimmedDescription.length > 0
+            ? trimmedDescription
+            : undefined,
+        board_key: opts.boardKey,
+        attachment_keys: attachmentKeys.length > 0 ? attachmentKeys : undefined,
+      };
+
+      try {
+        await client.post('/v1/requests', body);
       } catch (err) {
+        // Network failure → persist for replay on next configure().
+        // HTTP 4xx/5xx (server-validated rejection) still surfaces
+        // as a logged error and is NOT queued — the body is invalid
+        // and retries would loop forever.
+        if (err instanceof FeddyError && err.code === 'network') {
+          try {
+            await enqueueSubmit(body);
+            console.warn(
+              '[Feddy] submitRequest offline — queued for retry on next configure()'
+            );
+          } catch (queueErr) {
+            logError('submitRequest.enqueue', queueErr);
+          }
+          return;
+        }
         logError('submitRequest', err);
       }
     })();
@@ -362,6 +385,9 @@ export const Feddy = {
     });
     void clearCapabilitiesCache().catch((err) => {
       logError('reset.cache', err);
+    });
+    void clearQueue().catch((err) => {
+      logError('reset.queue', err);
     });
     uiState.close();
   },
