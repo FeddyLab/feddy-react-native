@@ -34,7 +34,8 @@ export interface AttachmentPickerButtonProps {
 /**
  * Image attachment picker. Uses `expo-image-picker` (soft peer dep)
  * to launch the system library, capping at 3 images per request to
- * match server quota. Each thumbnail has a remove handle.
+ * match the server's accepted batch size. Each thumbnail has a remove
+ * handle.
  */
 export function AttachmentPickerButton({
   uris,
