@@ -3,6 +3,7 @@ import * as readApi from './api/read';
 import { uploadAttachment } from './attachments/upload';
 import { clearCapabilitiesCache, refreshInBackground } from './capabilities';
 import { FeddyClient, FeddyError } from './client';
+import { detectActiveSubscription } from './iap-detector';
 import {
   getAnonymousToken,
   getLastExternalUserId,
@@ -13,8 +14,10 @@ import { getCurrentClient, setCurrentClient } from './runtime';
 import type { RequestReviewOptions } from './smart-review';
 import * as smartReview from './smart-review';
 import {
+  clearAutoDetectedSubscription,
   clearStoredSubscription,
-  getStoredSubscription,
+  getEffectiveSubscription,
+  setAutoDetectedSubscription,
   setStoredSubscription,
 } from './subscription-store';
 import type {
@@ -144,6 +147,21 @@ export const Feddy = {
       void smartReview.bumpSession().catch((err) => {
         logError('configure.bumpSession', err);
       });
+      if (opts.autoDetectSubscription !== false) {
+        // Read the host app's currently-active entitlement from
+        // expo-iap once at configure time. Mirrors iOS's StoreKit
+        // detector triggered on configure. Fire-and-forget — when
+        // expo-iap is absent or the host hasn't initialised it yet,
+        // detector returns null and we just skip writing.
+        void (async () => {
+          try {
+            const detected = await detectActiveSubscription();
+            await setAutoDetectedSubscription(detected);
+          } catch (err) {
+            logError('configure.detectSubscription', err);
+          }
+        })();
+      }
     } catch (err) {
       logError('configure', err);
     }
@@ -170,7 +188,19 @@ export const Feddy = {
         }
         const anonymousToken =
           externalUserId == null ? await getAnonymousToken() : undefined;
-        const subscription = await getStoredSubscription();
+        // Refresh auto-detected subscription before serializing the
+        // identify payload so the most recent entitlement state lands
+        // server-side. Manual override (set via Feddy.setSubscription)
+        // still takes precedence — see getEffectiveSubscription.
+        if (client.autoDetectSubscription) {
+          try {
+            const detected = await detectActiveSubscription();
+            await setAutoDetectedSubscription(detected);
+          } catch (err) {
+            logError('identify.detectSubscription', err);
+          }
+        }
+        const subscription = await getEffectiveSubscription();
         const subscriptionPayload = subscription
           ? {
               is_paid: subscription.isPaid,
@@ -270,13 +300,13 @@ export const Feddy = {
   /**
    * Override the subscription snapshot the SDK attaches to its next
    * `identify(...)` call. Use when your app's source-of-truth for paid
-   * state is RevenueCat, Adapty, or your own server.
+   * state is RevenueCat, Adapty, or your own server. Manual override
+   * always wins over the auto-detected `expo-iap` snapshot.
    *
-   * Pass `null` to clear the override.
+   * Pass `null` to clear the override and let the auto-detected value
+   * (if any) take effect again.
    *
-   * Persists across launches via AsyncStorage. v0.1 has no automatic
-   * StoreKit / Play Billing detection — manual override is the only
-   * source.
+   * Persists across launches via AsyncStorage.
    */
   setSubscription(subscription: Subscription | null): void {
     void setStoredSubscription(subscription).catch((err) => {
@@ -285,16 +315,32 @@ export const Feddy = {
   },
 
   /**
-   * Re-read the device's subscription state. **No-op in v0.1** —
-   * StoreKit 2 / Play Billing auto-detection requires a native bridge
-   * (e.g. `react-native-iap`) which is excluded from the pure-JS HTTP
-   * route. Use `Feddy.setSubscription(...)` instead.
+   * Re-read the host app's currently-active subscription from
+   * `expo-iap` (StoreKit 2 on iOS, Play Billing on Android). Call
+   * after a purchase, restore, or subscription state change so the
+   * SDK's snapshot stays fresh.
    *
-   * Provided as a stable surface so host code written against the v1.0
-   * API continues to compile.
+   * Fire-and-forget. No-op when `expo-iap` isn't installed or the host
+   * disabled `autoDetectSubscription`. The manual override set by
+   * `setSubscription(...)` is unaffected.
    */
   refreshSubscription(): void {
-    // Intentionally empty — see docstring.
+    const client = getCurrentClient();
+    if (!client) {
+      console.warn(
+        '[Feddy] refreshSubscription called before configure — ignoring'
+      );
+      return;
+    }
+    if (!client.autoDetectSubscription) return;
+    void (async () => {
+      try {
+        const detected = await detectActiveSubscription();
+        await setAutoDetectedSubscription(detected);
+      } catch (err) {
+        logError('refreshSubscription', err);
+      }
+    })();
   },
 
   /**
@@ -310,6 +356,9 @@ export const Feddy = {
     });
     void clearStoredSubscription().catch((err) => {
       logError('reset.subscription', err);
+    });
+    void clearAutoDetectedSubscription().catch((err) => {
+      logError('reset.subscription.auto', err);
     });
     void clearCapabilitiesCache().catch((err) => {
       logError('reset.cache', err);

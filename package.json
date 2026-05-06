@@ -52,6 +52,7 @@
     "@react-native-async-storage/async-storage": ">=1.21.0",
     "expo-application": "*",
     "expo-device": "*",
+    "expo-iap": "*",
     "expo-image-manipulator": "*",
     "expo-image-picker": "*",
     "expo-localization": "*",
@@ -65,6 +66,9 @@
       "optional": true
     },
     "expo-device": {
+      "optional": true
+    },
+    "expo-iap": {
       "optional": true
     },
     "expo-image-manipulator": {
@@ -84,6 +88,7 @@
     "@biomejs/biome": "^2.4.14",
     "@react-native-async-storage/async-storage": "^3.0.2",
     "@types/react": "^19.2.14",
+    "expo-iap": "^4.2.4",
     "react": "^19.2.5",
     "react-native": "^0.85.2",
     "react-native-safe-area-context": "^5.7.0",

@@ -31,13 +31,23 @@ interface ServerErrorEnvelope {
 export class FeddyClient {
   readonly apiKey: string;
   readonly baseUrl: string;
+  readonly autoDetectSubscription: boolean;
 
-  private constructor(apiKey: string, baseUrl: string) {
+  private constructor(
+    apiKey: string,
+    baseUrl: string,
+    autoDetectSubscription: boolean
+  ) {
     this.apiKey = apiKey;
     this.baseUrl = baseUrl;
+    this.autoDetectSubscription = autoDetectSubscription;
   }
 
-  static create(opts: { apiKey: string; baseUrl?: string }): FeddyClient {
+  static create(opts: {
+    apiKey: string;
+    baseUrl?: string;
+    autoDetectSubscription?: boolean;
+  }): FeddyClient {
     const validation = validateApiKey(opts.apiKey);
     if (!validation.ok) {
       throw new FeddyError({
@@ -45,7 +55,11 @@ export class FeddyClient {
         message: validation.reason,
       });
     }
-    return new FeddyClient(validation.value, opts.baseUrl ?? DEFAULT_BASE_URL);
+    return new FeddyClient(
+      validation.value,
+      opts.baseUrl ?? DEFAULT_BASE_URL,
+      opts.autoDetectSubscription !== false
+    );
   }
 
   async post<T = unknown>(path: string, body: unknown): Promise<T> {

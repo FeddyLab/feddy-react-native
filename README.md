@@ -15,7 +15,8 @@ For richer features, also install the optional Expo modules — each adds a spec
 ```sh
 npx expo install \
   expo-application expo-device expo-localization \
-  expo-image-picker expo-image-manipulator expo-store-review
+  expo-image-picker expo-image-manipulator expo-store-review \
+  expo-iap
 ```
 
 | Optional module | Powers |
@@ -24,6 +25,7 @@ npx expo install \
 | `expo-localization` | Auto-detect device locale (en / es / ja / de / fr) |
 | `expo-image-picker` / `expo-image-manipulator` | Image attachments on feedback submissions |
 | `expo-store-review` | Native App Store / Play Store review prompt for 4-5 star ratings |
+| `expo-iap` | Auto-detect the user's active subscription via StoreKit 2 / Play Billing |
 
 ## Quick Start
 
@@ -172,9 +174,31 @@ Clears the last identified user, manual subscription override, and cached server
 
 ### Subscription State
 
-If your app uses RevenueCat, Adapty, or your own subscription source-of-truth, push the state to Feddy so feedback rows in your dashboard carry up-to-date plan info:
+By default the SDK reads the host app's currently-active subscription from `expo-iap` (StoreKit 2 on iOS, Play Billing on Android) once at `configure(...)` and again on each `identify(...)`, so feedback rows in your dashboard carry up-to-date plan info with zero extra wiring.
 
 ```ts
+import { Feddy } from '@feddyapp/react-native';
+
+Feddy.configure({ apiKey: 'fed_xxxxxxxxxxxx' });
+// Auto-detection runs in the background.
+```
+
+Auto-detection requires the `expo-iap` peer dep to be installed and initialised by the host app. When it's absent the SDK silently skips detection.
+
+After a purchase, restore, or subscription state change, ask the SDK to re-read the entitlement so the next identify carries the freshest snapshot:
+
+```ts
+Feddy.refreshSubscription();
+```
+
+If your source-of-truth for paid state is RevenueCat, Adapty, or your own server, disable auto-detection and push the state explicitly:
+
+```ts
+Feddy.configure({
+  apiKey: 'fed_xxxxxxxxxxxx',
+  autoDetectSubscription: false,
+});
+
 Feddy.setSubscription({
   isPaid: true,
   status: 'active',
@@ -182,11 +206,11 @@ Feddy.setSubscription({
   expiresAt: '2026-12-31T00:00:00Z',
 });
 
-// Pass null to clear
+// Pass null to clear and let auto-detection take over again.
 Feddy.setSubscription(null);
 ```
 
-The override persists across launches. The next `Feddy.identify(...)` call attaches the value automatically.
+Manual override always wins over the auto-detected snapshot. Both persist across launches; the next `Feddy.identify(...)` call attaches whichever takes precedence automatically.
 
 ### Programmatic Submit
 

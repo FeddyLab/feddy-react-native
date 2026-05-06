@@ -1,6 +1,22 @@
 export interface ConfigureOptions {
   apiKey: string;
   baseUrl?: string;
+  /**
+   * When `true` (default), the SDK reads the host app's currently-active
+   * subscription from `expo-iap` (StoreKit 2 on iOS, Play Billing on
+   * Android) once after `configure(...)` and again on each
+   * `identify(...)` so feedback rows in the dashboard carry up-to-date
+   * subscription state.
+   *
+   * Set to `false` if your app's source-of-truth for paid state is
+   * RevenueCat / Adapty / your own server — pass the result of that
+   * source to `Feddy.setSubscription(...)` instead.
+   *
+   * Auto-detection requires the `expo-iap` peer dep to be installed.
+   * When it's absent the SDK silently skips detection and only the
+   * manual `Feddy.setSubscription(...)` override is used.
+   */
+  autoDetectSubscription?: boolean;
 }
 
 export interface IdentifyOptions {
@@ -117,7 +133,7 @@ export interface VoteState {
   voteCount: number;
 }
 
-// ---------- Subscription (manual override, no auto-detect in v0.1) ----------
+// ---------- Subscription (manual override + auto-detect via expo-iap) ----------
 
 export type SubscriptionStatus = 'active' | 'trial' | 'expired' | 'none';
 
