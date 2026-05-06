@@ -1,3 +1,7 @@
+import type { Locale } from './i18n';
+
+export type { Locale } from './i18n';
+
 export interface ConfigureOptions {
   apiKey: string;
   baseUrl?: string;
@@ -17,6 +21,32 @@ export interface ConfigureOptions {
    * manual `Feddy.setSubscription(...)` override is used.
    */
   autoDetectSubscription?: boolean;
+  /**
+   * Display-name translations for **custom** board keys — anything
+   * beyond the two SDK-shipped system boards (`features` / `bugs`).
+   * Keyed by board key, then by SDK locale (`en` / `es` / `ja` / `de`
+   * / `fr`). Missing locales fall through to the server-supplied
+   * `board.name` (whatever the admin typed in the dashboard).
+   *
+   * ```ts
+   * Feddy.configure({
+   *   apiKey: 'fed_xxxxxxxxxxxx',
+   *   boardTranslations: {
+   *     'roadmap-2026': {
+   *       en: 'Roadmap 2026',
+   *       ja: 'ロードマップ 2026',
+   *       es: 'Hoja de ruta 2026',
+   *     },
+   *     design: { ja: 'デザインフィードバック' },
+   *   },
+   * });
+   * ```
+   *
+   * Has no effect on the SDK's system keys (`features` / `bugs`):
+   * those are always pulled from the bundled SDK catalog so the
+   * first-party UI stays consistent across SDK platforms.
+   */
+  boardTranslations?: Record<string, Partial<Record<Locale, string>>>;
 }
 
 export interface IdentifyOptions {

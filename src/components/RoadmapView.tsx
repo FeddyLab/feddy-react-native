@@ -15,6 +15,7 @@ import * as readApi from '../api/read';
 import { FeddyError } from '../client';
 import { t } from '../i18n';
 import { getCurrentClient } from '../runtime';
+import { localizedBoardName, systemDefaultBoards } from '../system-boards';
 import type { FeedbackBoard, FeedbackRequest, RoadmapStatus } from '../types';
 import {
   EmptyState,
@@ -24,16 +25,13 @@ import {
   LoadingFullScreen,
   statusLabel,
 } from './_shared';
-import { FeedbackComposeContent } from './FeedbackComposeView';
+import { FeedbackComposeView } from './FeedbackComposeView';
 import { PoweredByBadge } from './PoweredByBadge';
 import { RequestDetailContent } from './RequestDetailView';
 import { RequestRow } from './RequestRow';
 
 function bundledFallbackBoards(): FeedbackBoard[] {
-  return [
-    { key: 'features', name: t('board.features') },
-    { key: 'bugs', name: t('board.bugs') },
-  ];
+  return systemDefaultBoards();
 }
 
 const TABS: RoadmapStatus[] = ['planned', 'in_progress', 'completed'];
@@ -44,10 +42,7 @@ export interface RoadmapViewProps {
   boards?: FeedbackBoard[];
 }
 
-type Screen =
-  | { kind: 'roadmap' }
-  | { kind: 'detail'; requestId: string }
-  | { kind: 'compose' };
+type Screen = { kind: 'roadmap' } | { kind: 'detail'; requestId: string };
 
 interface TabState {
   items: FeedbackRequest[];
@@ -99,6 +94,7 @@ export function RoadmapView({
   }, [boardsProp]);
 
   const [screen, setScreen] = useState<Screen>({ kind: 'roadmap' });
+  const [composeOpen, setComposeOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<RoadmapStatus>('planned');
   const [tabs, setTabs] = useState<Record<RoadmapStatus, TabState>>(() => ({
     planned: initialTabState(),
@@ -283,8 +279,7 @@ export function RoadmapView({
   };
 
   const boardName = (key: string) =>
-    resolvedBoards.find((b) => b.key === key)?.name ??
-    (key.length === 0 ? '' : key.charAt(0).toUpperCase() + key.slice(1));
+    localizedBoardName(key, resolvedBoards.find((b) => b.key === key)?.name);
 
   const tab = tabs[activeTab];
 
@@ -300,14 +295,6 @@ export function RoadmapView({
           <RequestDetailContent
             requestId={screen.requestId}
             onBack={() => setScreen({ kind: 'roadmap' })}
-          />
-        ) : screen.kind === 'compose' ? (
-          <FeedbackComposeContent
-            boards={resolvedBoards}
-            onDismiss={() => {
-              setScreen({ kind: 'roadmap' });
-              void loadInitial(activeTab, true);
-            }}
           />
         ) : (
           <>
@@ -331,7 +318,7 @@ export function RoadmapView({
               <View style={styles.toolbarSide}>
                 <IconButton
                   icon="＋"
-                  onPress={() => setScreen({ kind: 'compose' })}
+                  onPress={() => setComposeOpen(true)}
                   accessibilityLabel={t('compose.title')}
                   circle
                   fontSize={20}
@@ -418,6 +405,15 @@ export function RoadmapView({
           </>
         )}
       </SafeAreaView>
+
+      <FeedbackComposeView
+        visible={composeOpen}
+        boards={resolvedBoards}
+        onDismiss={() => {
+          setComposeOpen(false);
+          void loadInitial(activeTab, true);
+        }}
+      />
     </Modal>
   );
 }

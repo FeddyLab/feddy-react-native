@@ -22,6 +22,7 @@ import {
   getLastExternalUserId,
 } from '../identity';
 import { getCurrentClient } from '../runtime';
+import { localizedBoardName, systemDefaultBoards } from '../system-boards';
 import type { FeedbackBoard } from '../types';
 import { AttachmentPickerButton } from './AttachmentPickerButton';
 import { PoweredByBadge } from './PoweredByBadge';
@@ -29,10 +30,7 @@ import { PoweredByBadge } from './PoweredByBadge';
 // Local fallback used only when no `boards` prop is passed AND the
 // initial server fetch hasn't completed yet. Names are i18n-localized.
 function bundledFallbackBoards(): FeedbackBoard[] {
-  return [
-    { key: 'features', name: t('board.features') },
-    { key: 'bugs', name: t('board.bugs') },
-  ];
+  return systemDefaultBoards();
 }
 
 // ---------- Standalone Modal wrapper (used by FeddyProvider + direct host use) ----------
@@ -57,9 +55,11 @@ export interface FeedbackComposeViewProps {
  * its own visibility state, or rely on `<FeddyProvider />` to mount it
  * once and trigger via `Feddy.openFeedback()`.
  *
- * When nesting inside another modal (`RequestListView` / `RoadmapView`'s
- * compose entry point), use `<FeedbackComposeContent />` directly to
- * avoid RN's Modal-in-Modal stacking issues on iOS.
+ * Designed to nest inside another modal — `RequestListView` and
+ * `RoadmapView` mount this directly so the compose sheet slides up
+ * over the list rather than replacing it. `<FeedbackComposeContent />`
+ * is also exported separately for hosts that want the form without
+ * the Modal wrapper (e.g. embedded inside a custom navigation stack).
  */
 export function FeedbackComposeView({
   visible,
@@ -210,8 +210,10 @@ export function FeedbackComposeContent({
 
   const submitDisabled = submitting || title.trim().length === 0;
   const showPicker = resolvedBoards.length > 1;
-  const selectedBoardName =
-    resolvedBoards.find((b) => b.key === selectedBoardKey)?.name ?? '';
+  const selectedBoardName = localizedBoardName(
+    selectedBoardKey,
+    resolvedBoards.find((b) => b.key === selectedBoardKey)?.name
+  );
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
@@ -319,7 +321,7 @@ export function FeedbackComposeContent({
                 <Text style={styles.categoryLabel}>Category</Text>
                 <View style={styles.categoryRight}>
                   <Text style={styles.categoryValue}>{selectedBoardName}</Text>
-                  <Text style={styles.categoryChevron}>⌄</Text>
+                  <Text style={styles.categoryChevron}>▾</Text>
                 </View>
               </Pressable>
             </Section>
@@ -420,7 +422,7 @@ function CategoryPicker({
                       isSelected && pickerStyles.optionTextSelected,
                     ]}
                   >
-                    {b.name}
+                    {localizedBoardName(b.key, b.name)}
                   </Text>
                   {isSelected ? (
                     <Text style={pickerStyles.optionCheck}>✓</Text>
@@ -567,15 +569,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: '#F2F2F7',
+    borderRadius: 8,
   },
   categoryValue: {
     fontSize: 15,
-    color: '#666',
+    color: '#1f2937',
+    fontWeight: '500',
   },
   categoryChevron: {
-    fontSize: 16,
-    color: '#9ca3af',
-    fontWeight: '600',
+    fontSize: 14,
+    color: '#374151',
+    fontWeight: '700',
+    lineHeight: 16,
+    marginTop: -1,
   },
   error: {
     color: '#c33',

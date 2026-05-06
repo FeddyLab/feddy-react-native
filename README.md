@@ -212,6 +212,32 @@ Feddy.setSubscription(null);
 
 Manual override always wins over the auto-detected snapshot. Both persist across launches; the next `Feddy.identify(...)` call attaches whichever takes precedence automatically.
 
+### Custom Board Translations
+
+The two SDK-shipped system boards (`features` / `bugs`) come pre-translated in 5 locales (en / es / ja / de / fr) and are picked automatically based on the device locale. For **custom boards** you create in the dashboard, supply per-locale display names via `boardTranslations`:
+
+```ts
+Feddy.configure({
+  apiKey: 'fed_xxxxxxxxxxxx',
+  boardTranslations: {
+    'roadmap-2026': {
+      en: 'Roadmap 2026',
+      ja: 'ロードマップ 2026',
+      es: 'Hoja de ruta 2026',
+    },
+    design: { ja: 'デザインフィードバック' },
+  },
+});
+```
+
+Resolution order for any custom board key:
+
+1. Host `boardTranslations[key][deviceLocale]` if set
+2. The server's `board.name` (whatever the admin typed in the dashboard)
+3. Capitalized key as a last-ditch label
+
+System keys (`features` / `bugs`) always use the SDK's bundled translations — they are intentionally not overridable so first-party UI stays consistent across SDK platforms.
+
 ### Programmatic Submit
 
 Submit feedback without showing the modal — useful for custom UIs:

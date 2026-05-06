@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { FeddyClient } from '../client';
-import { t } from '../i18n';
+import { localizeBoard, systemDefaultBoards } from '../system-boards';
 import type { FeedbackBoard } from '../types';
 
 const CACHE_KEY = 'app.feddy.boards.cache.v1';
@@ -22,10 +22,7 @@ interface ServerResponse {
  * even when offline.
  */
 function defaultSystemBoards(): FeedbackBoard[] {
-  return [
-    { key: 'features', name: t('board.features') },
-    { key: 'bugs', name: t('board.bugs') },
-  ];
+  return systemDefaultBoards();
 }
 
 async function readCache(): Promise<CacheEntry | null> {
@@ -86,10 +83,9 @@ export async function fetchBoards(
   // No cache — must hit the network. Fallback on any failure.
   try {
     const response = await client.get<ServerResponse>('/v1/boards');
-    const items: FeedbackBoard[] = response.items.map((b) => ({
-      key: b.key,
-      name: b.name,
-    }));
+    const items: FeedbackBoard[] = response.items.map((b) =>
+      localizeBoard({ key: b.key, name: b.name })
+    );
     if (items.length > 0) {
       await writeCache(items);
       return items;
@@ -106,10 +102,9 @@ export async function fetchBoards(
 async function refreshBoards(client: FeddyClient): Promise<void> {
   try {
     const response = await client.get<ServerResponse>('/v1/boards');
-    const items: FeedbackBoard[] = response.items.map((b) => ({
-      key: b.key,
-      name: b.name,
-    }));
+    const items: FeedbackBoard[] = response.items.map((b) =>
+      localizeBoard({ key: b.key, name: b.name })
+    );
     if (items.length > 0) {
       await writeCache(items);
     }

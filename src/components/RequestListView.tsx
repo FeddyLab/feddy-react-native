@@ -15,6 +15,7 @@ import * as readApi from '../api/read';
 import { FeddyError } from '../client';
 import { t } from '../i18n';
 import { getCurrentClient } from '../runtime';
+import { localizedBoardName, systemDefaultBoards } from '../system-boards';
 import type { FeedbackBoard, FeedbackRequest } from '../types';
 import {
   EmptyState,
@@ -23,7 +24,7 @@ import {
   LoadingFooter,
   LoadingFullScreen,
 } from './_shared';
-import { FeedbackComposeContent } from './FeedbackComposeView';
+import { FeedbackComposeView } from './FeedbackComposeView';
 import { PoweredByBadge } from './PoweredByBadge';
 import { RequestDetailContent } from './RequestDetailView';
 import { RequestRow } from './RequestRow';
@@ -39,10 +40,7 @@ export const SYSTEM_BOARDS: FeedbackBoard[] = [
 ];
 
 function bundledFallbackBoards(): FeedbackBoard[] {
-  return [
-    { key: 'features', name: t('board.features') },
-    { key: 'bugs', name: t('board.bugs') },
-  ];
+  return systemDefaultBoards();
 }
 
 export interface RequestListViewProps {
@@ -56,10 +54,7 @@ export interface RequestListViewProps {
   boards?: FeedbackBoard[];
 }
 
-type Screen =
-  | { kind: 'list' }
-  | { kind: 'detail'; requestId: string }
-  | { kind: 'compose' };
+type Screen = { kind: 'list' } | { kind: 'detail'; requestId: string };
 
 export function RequestListView({
   visible,
@@ -87,6 +82,7 @@ export function RequestListView({
   }, [boardsProp]);
 
   const [screen, setScreen] = useState<Screen>({ kind: 'list' });
+  const [composeOpen, setComposeOpen] = useState(false);
   const [selectedBoardKey, setSelectedBoardKey] = useState<string | null>(null);
   const [items, setItems] = useState<FeedbackRequest[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
@@ -246,10 +242,10 @@ export function RequestListView({
   };
 
   const boardName = (key: string) =>
-    resolvedBoards.find((b) => b.key === key)?.name ?? capitalize(key);
+    localizedBoardName(key, resolvedBoards.find((b) => b.key === key)?.name);
 
   const handleCompose = () => {
-    setScreen({ kind: 'compose' });
+    setComposeOpen(true);
   };
 
   const renderHeader = () => {
@@ -308,15 +304,6 @@ export function RequestListView({
           <RequestDetailContent
             requestId={screen.requestId}
             onBack={() => setScreen({ kind: 'list' })}
-          />
-        ) : screen.kind === 'compose' ? (
-          <FeedbackComposeContent
-            boards={resolvedBoards}
-            boardKey={selectedBoardKey ?? undefined}
-            onDismiss={() => {
-              setScreen({ kind: 'list' });
-              void loadInitial(true);
-            }}
           />
         ) : (
           <>
@@ -404,6 +391,16 @@ export function RequestListView({
           </View>
         </Pressable>
       </Modal>
+
+      <FeedbackComposeView
+        visible={composeOpen}
+        boards={resolvedBoards}
+        boardKey={selectedBoardKey ?? undefined}
+        onDismiss={() => {
+          setComposeOpen(false);
+          void loadInitial(true);
+        }}
+      />
     </Modal>
   );
 }
@@ -429,10 +426,6 @@ function FilterMenuItem({
       {selected ? <Text style={styles.menuItemCheck}>✓</Text> : null}
     </Pressable>
   );
-}
-
-function capitalize(s: string): string {
-  return s.length === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 const styles = StyleSheet.create({

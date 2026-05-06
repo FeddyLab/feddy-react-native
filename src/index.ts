@@ -21,6 +21,7 @@ import {
   setAutoDetectedSubscription,
   setStoredSubscription,
 } from './subscription-store';
+import { setBoardTranslations } from './system-boards';
 import type {
   AddCommentOptions,
   CommentList,
@@ -67,6 +68,7 @@ export type { RoadmapViewProps } from './components/RoadmapView';
 export { RoadmapView } from './components/RoadmapView';
 export { SmartReviewSheet } from './components/SmartReviewSheet';
 export type { RequestReviewOptions } from './smart-review';
+export type { BoardTranslations } from './system-boards';
 export type {
   AddCommentOptions,
   Attachment,
@@ -80,6 +82,7 @@ export type {
   FetchCommentsOptions,
   FetchRequestsOptions,
   IdentifyOptions,
+  Locale,
   OpenFeedbackOptions,
   RequestList,
   RoadmapStatus,
@@ -141,6 +144,9 @@ export const Feddy = {
     try {
       const client = FeddyClient.create(opts);
       setCurrentClient(client);
+      // Wire host-supplied custom-board translations before any view
+      // renders so the picker labels are correct on first paint.
+      setBoardTranslations(opts.boardTranslations);
       refreshInBackground(client);
       // Bump SmartReview session counter so the install-age + sessions
       // gates have meaningful state. Fire-and-forget; failures don't

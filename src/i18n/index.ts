@@ -36,7 +36,12 @@ function detectLocale(): Locale {
   return 'en';
 }
 
-function currentLocale(): Locale {
+/**
+ * The locale `t(...)` is currently using. Resolves on first access via
+ * `expo-localization` (or 'en' fallback) and is cached for the rest of
+ * the process; `setLocale(null)` re-detects on next read.
+ */
+export function currentLocale(): Locale {
   if (resolvedLocale != null) return resolvedLocale;
   resolvedLocale = detectLocale();
   return resolvedLocale;
