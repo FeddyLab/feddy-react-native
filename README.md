@@ -212,9 +212,17 @@ Feddy.setSubscription(null);
 
 Manual override always wins over the auto-detected snapshot. Both persist across launches; the next `Feddy.identify(...)` call attaches whichever takes precedence automatically.
 
-### Custom Board Translations
+### Custom Boards & i18n
 
-The two SDK-shipped system boards (`features` / `bugs`) come pre-translated in 5 locales (en / es / ja / de / fr) and are picked automatically based on the device locale. For **custom boards** you create in the dashboard, supply per-locale display names via `boardTranslations`:
+The two SDK-shipped system boards (`features` / `bugs`) come pre-translated in 5 locales (en / es / ja / de / fr) and are picked automatically based on the device locale. The bundled views fetch the workspace's full board set from `GET /v1/boards` (1 h cached) so any custom board you create in the dashboard appears without redeploying the app:
+
+```tsx
+<FeedbackComposeView visible={open} onDismiss={...} />   // boards fetched in the background
+<RequestListView visible={open} onDismiss={...} />
+<RoadmapView visible={open} onDismiss={...} />
+```
+
+For **custom boards**, supply per-locale display names via `boardTranslations` so each device locale renders the right label:
 
 ```ts
 Feddy.configure({
@@ -232,11 +240,36 @@ Feddy.configure({
 
 Resolution order for any custom board key:
 
-1. Host `boardTranslations[key][deviceLocale]` if set
+1. `boardTranslations[key][deviceLocale]` if set
 2. The server's `board.name` (whatever the admin typed in the dashboard)
 3. Capitalized key as a last-ditch label
 
 System keys (`features` / `bugs`) always use the SDK's bundled translations — they are intentionally not overridable so first-party UI stays consistent across SDK platforms.
+
+If your app already has its own i18n system and you want to bypass `fetchBoards`, pass an explicit `boards` prop — the view will skip the network call entirely:
+
+```tsx
+import { useTranslation } from 'react-i18next';
+
+function FeedbackEntry() {
+  const { t } = useTranslation();
+  return (
+    <RequestListView
+      visible={open}
+      onDismiss={...}
+      boards={[
+        { key: 'features', name: t('feedback.boards.features') },
+        { key: 'bugs', name: t('feedback.boards.bugs') },
+        { key: 'design', name: t('feedback.boards.design') },
+      ]}
+    />
+  );
+}
+```
+
+```ts
+const boards = await Feddy.fetchBoards();    // for custom UIs
+```
 
 ### Programmatic Submit
 
