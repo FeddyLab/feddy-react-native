@@ -8,7 +8,12 @@
   "source": "src/index.ts",
   "files": [
     "dist",
-    "src",
+    "src/api",
+    "src/attachments",
+    "src/components",
+    "src/i18n",
+    "src/smart-review",
+    "src/*.ts",
     "README.md",
     "LICENSE"
   ],
