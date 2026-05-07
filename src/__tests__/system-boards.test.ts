@@ -27,23 +27,21 @@ describe('system-boards', () => {
 
   describe('localizedBoardName', () => {
     it('returns the i18n catalog value for system keys (en)', () => {
-      expect(localizedBoardName('features')).toBe('Feature Requests');
-      expect(localizedBoardName('bugs')).toBe('Bug Reports');
+      expect(localizedBoardName('features')).toBe('Feature');
+      expect(localizedBoardName('bugs')).toBe('Bug');
     });
 
     it('returns the i18n catalog value for system keys (ja)', () => {
       setLocale('ja');
-      expect(localizedBoardName('features')).toBe('機能リクエスト');
-      expect(localizedBoardName('bugs')).toBe('バグ報告');
+      expect(localizedBoardName('features')).toBe('機能');
+      expect(localizedBoardName('bugs')).toBe('バグ');
     });
 
     it('ignores the server fallback name on system keys', () => {
       // Server may have seeded "Features" (English) into the workspace
       // row; SDK overrides with the device-locale translation.
       setLocale('de');
-      expect(localizedBoardName('features', 'Features')).toBe(
-        'Funktionswünsche'
-      );
+      expect(localizedBoardName('features', 'Features')).toBe('Funktion');
     });
 
     it('returns the server name for custom keys', () => {
@@ -70,7 +68,7 @@ describe('system-boards', () => {
       setLocale('es');
       expect(localizeBoard({ key: 'features', name: 'Features' })).toEqual({
         key: 'features',
-        name: 'Solicitudes de funciones',
+        name: 'Función',
       });
     });
 
@@ -119,11 +117,9 @@ describe('system-boards', () => {
         },
       } as never);
       setLocale('ja');
-      expect(localizedBoardName('features', 'Features')).toBe('機能リクエスト');
+      expect(localizedBoardName('features', 'Features')).toBe('機能');
       setLocale('en');
-      expect(localizedBoardName('features', 'Features')).toBe(
-        'Feature Requests'
-      );
+      expect(localizedBoardName('features', 'Features')).toBe('Feature');
     });
 
     it('setBoardTranslations(null) clears the table', () => {
@@ -155,11 +151,11 @@ describe('system-boards', () => {
       expect(boards).toHaveLength(2);
       expect(boards[0]).toEqual({
         key: 'features',
-        name: 'Demandes de fonctionnalités',
+        name: 'Fonction',
       });
       expect(boards[1]).toEqual({
         key: 'bugs',
-        name: 'Rapports de bugs',
+        name: 'Bug',
       });
     });
   });

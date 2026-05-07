@@ -55,8 +55,8 @@
   "status.rejected": "Rechazado",
   "status.duplicate": "Duplicado",
 
-  "board.features": "Solicitudes de funciones",
-  "board.bugs": "Informes de errores",
+  "board.features": "Función",
+  "board.bugs": "Error",
 
   "time.justNow": "ahora mismo",
   "time.secondsAgo": "hace {n}s",

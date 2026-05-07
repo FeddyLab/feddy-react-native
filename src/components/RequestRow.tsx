@@ -4,7 +4,7 @@ import { BoardChip, StatusChip, VoteButton } from './_shared';
 
 export interface RequestRowProps {
   request: FeedbackRequest;
-  /** Display name of the board (e.g. "Feature Requests"). */
+  /** Display name of the board (e.g. "Feature"). */
   boardName: string;
   /** Optimistic vote count override; falls back to `request.voteCount`. */
   voteOverlay?: number;

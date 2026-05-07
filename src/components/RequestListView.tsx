@@ -35,8 +35,8 @@ import { RequestRow } from './RequestRow';
  * list (e.g. unit tests) can pass `boards={SYSTEM_BOARDS}` explicitly.
  */
 export const SYSTEM_BOARDS: FeedbackBoard[] = [
-  { key: 'features', name: 'Feature Requests' },
-  { key: 'bugs', name: 'Bug Reports' },
+  { key: 'features', name: 'Feature' },
+  { key: 'bugs', name: 'Bug' },
 ];
 
 function bundledFallbackBoards(): FeedbackBoard[] {

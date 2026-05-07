@@ -55,8 +55,8 @@
   "status.rejected": "却下",
   "status.duplicate": "重複",
 
-  "board.features": "機能リクエスト",
-  "board.bugs": "バグ報告",
+  "board.features": "機能",
+  "board.bugs": "バグ",
 
   "time.justNow": "たった今",
   "time.secondsAgo": "{n}秒前",

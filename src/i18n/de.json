@@ -55,8 +55,8 @@
   "status.rejected": "Abgelehnt",
   "status.duplicate": "Duplikat",
 
-  "board.features": "Funktionswünsche",
-  "board.bugs": "Fehlerberichte",
+  "board.features": "Funktion",
+  "board.bugs": "Fehler",
 
   "time.justNow": "gerade eben",
   "time.secondsAgo": "vor {n}s",

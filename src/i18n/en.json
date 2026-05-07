@@ -55,8 +55,8 @@
   "status.rejected": "Rejected",
   "status.duplicate": "Duplicate",
 
-  "board.features": "Feature Requests",
-  "board.bugs": "Bug Reports",
+  "board.features": "Feature",
+  "board.bugs": "Bug",
 
   "time.justNow": "just now",
   "time.secondsAgo": "{n}s ago",

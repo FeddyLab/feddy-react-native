@@ -403,7 +403,7 @@ export const Feddy = {
   /**
    * Fetch the workspace's public, non-archived boards. Cached locally
    * for 1h with stale-while-revalidate; falls back to the bundled
-   * system defaults (`Feature Requests` / `Bug Reports`) on network
+   * system defaults (`Feature` / `Bug`) on network
    * failure.
    *
    * The built-in compose modal calls this automatically, so most hosts

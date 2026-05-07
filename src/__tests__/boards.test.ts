@@ -35,8 +35,8 @@ function fakeClient(): FakeClient {
 }
 
 const liveBoards = [
-  { key: 'features', name: 'Feature Requests' },
-  { key: 'bugs', name: 'Bug Reports' },
+  { key: 'features', name: 'Feature' },
+  { key: 'bugs', name: 'Bug' },
   { key: 'roadmap-2026', name: 'Roadmap 2026' },
 ];
 
@@ -50,7 +50,7 @@ describe('fetchBoards', () => {
     client.get.mockResolvedValue({ items: liveBoards });
     const result = await fetchBoards(client as never);
     expect(result).toHaveLength(3);
-    expect(result[0]).toEqual({ key: 'features', name: 'Feature Requests' });
+    expect(result[0]).toEqual({ key: 'features', name: 'Feature' });
     expect(client.get).toHaveBeenCalledWith('/v1/boards');
   });
 
