@@ -36,6 +36,9 @@
   "detail.comments.loadMore": "Load more comments",
   "detail.comment.placeholder": "Add a comment…",
   "detail.comment.failed": "Could not send comment",
+  "detail.comment.you": "You",
+  "detail.comment.team": "Team",
+  "detail.comment.anonymous": "Anonymous",
   "detail.vote.failed": "Vote failed",
   "detail.tryAgain": "Try again in a moment.",
 

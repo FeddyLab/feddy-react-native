@@ -143,10 +143,34 @@ export interface RequestList {
   nextCursor: string | null;
 }
 
+/**
+ * Who posted a comment. `unknown` is the forward-compat fallback when
+ * an older server returns no `author_kind` field — older comments
+ * still display, just without the kind-specific styling.
+ */
+export type CommentAuthorKind = 'end_user' | 'admin' | 'unknown';
+
 export interface FeedbackComment {
   id: string;
   content: string;
   authorEndUserId: string | null;
+  /**
+   * Who posted this comment — used by the bundled `RequestDetailView`
+   * to color the row (own / other end user / team reply).
+   */
+  authorKind: CommentAuthorKind;
+  /**
+   * Display name resolved server-side. `null` for anonymous end users
+   * or older server versions that don't return the field.
+   */
+  authorDisplayName: string | null;
+  /**
+   * Whether the comment was posted by the calling end user. Server
+   * computes this against the SDK's `as_external_user_id` /
+   * `as_anonymous_token` query so it's stable across reinstalls when
+   * the host calls `Feddy.identify` with the same `userId`.
+   */
+  isSelf: boolean;
   /** ISO 8601 timestamp. */
   createdAt: string;
   /** ISO 8601 timestamp. */

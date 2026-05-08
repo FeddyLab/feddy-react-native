@@ -36,6 +36,9 @@
   "detail.comments.loadMore": "Charger plus de commentaires",
   "detail.comment.placeholder": "Ajouter un commentaire…",
   "detail.comment.failed": "Impossible d'envoyer le commentaire",
+  "detail.comment.you": "Vous",
+  "detail.comment.team": "Équipe",
+  "detail.comment.anonymous": "Anonyme",
   "detail.vote.failed": "Échec du vote",
   "detail.tryAgain": "Réessayez dans un instant.",
 

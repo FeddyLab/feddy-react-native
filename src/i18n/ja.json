@@ -36,6 +36,9 @@
   "detail.comments.loadMore": "コメントをさらに読み込む",
   "detail.comment.placeholder": "コメントを追加…",
   "detail.comment.failed": "コメントを送信できませんでした",
+  "detail.comment.you": "自分",
+  "detail.comment.team": "チーム",
+  "detail.comment.anonymous": "匿名",
   "detail.vote.failed": "投票に失敗しました",
   "detail.tryAgain": "しばらくしてから再度お試しください。",
 

@@ -74,9 +74,11 @@ export async function fetchComments(
 ): Promise<CommentList> {
   const escaped = escapeId(opts.requestId, 'Request id');
   const limit = clamp(opts.limit ?? 20, 1, 100);
+  const userQuery = await asUserQuery();
   const raw = await client.get<Parameters<typeof decodeCommentList>[0]>(
     `/v1/requests/${escaped}/comments`,
     {
+      ...userQuery,
       limit: String(limit),
       cursor: opts.cursor,
     }

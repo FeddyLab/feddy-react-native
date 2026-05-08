@@ -34,6 +34,9 @@ interface RawFeedbackComment {
   id: string;
   content: string;
   author_end_user_id?: string | null;
+  author_kind?: string;
+  author_display_name?: string | null;
+  is_self?: boolean;
   created_at: string;
   updated_at?: string;
 }
@@ -75,10 +78,19 @@ export function decodeFeedbackRequest(
 export function decodeFeedbackComment(
   raw: RawFeedbackComment
 ): FeedbackComment {
+  const kind: FeedbackComment['authorKind'] =
+    raw.author_kind === 'admin'
+      ? 'admin'
+      : raw.author_kind === 'end_user'
+        ? 'end_user'
+        : 'unknown';
   return {
     id: raw.id,
     content: raw.content,
     authorEndUserId: raw.author_end_user_id ?? null,
+    authorKind: kind,
+    authorDisplayName: raw.author_display_name ?? null,
+    isSelf: raw.is_self === true,
     createdAt: raw.created_at,
     // POST /v1/requests/:id/comments doesn't return updated_at on the
     // freshly-created row; default to created_at so the SDK can still

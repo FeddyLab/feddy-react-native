@@ -36,6 +36,9 @@
   "detail.comments.loadMore": "Mehr Kommentare laden",
   "detail.comment.placeholder": "Kommentar hinzufügen…",
   "detail.comment.failed": "Kommentar konnte nicht gesendet werden",
+  "detail.comment.you": "Du",
+  "detail.comment.team": "Team",
+  "detail.comment.anonymous": "Anonym",
   "detail.vote.failed": "Abstimmung fehlgeschlagen",
   "detail.tryAgain": "Versuche es in einem Moment erneut.",
 

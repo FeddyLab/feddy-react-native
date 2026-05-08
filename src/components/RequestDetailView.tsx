@@ -386,12 +386,52 @@ function AttachmentThumb({
 }
 
 function CommentRow({ comment }: { comment: FeedbackComment }) {
+  const isAdmin = comment.authorKind === 'admin';
+  const isSelf = comment.isSelf;
+
+  let label: string;
+  if (isSelf) {
+    label = t('detail.comment.you');
+  } else if (isAdmin) {
+    label = comment.authorDisplayName?.trim()
+      ? comment.authorDisplayName
+      : t('detail.comment.team');
+  } else {
+    label = comment.authorDisplayName?.trim()
+      ? comment.authorDisplayName
+      : t('detail.comment.anonymous');
+  }
+
+  const tone = isAdmin
+    ? styles.commentBubbleAdmin
+    : isSelf
+      ? styles.commentBubbleSelf
+      : styles.commentBubbleOther;
+  const labelTone = isAdmin
+    ? styles.commentLabelAdmin
+    : isSelf
+      ? styles.commentLabelSelf
+      : styles.commentLabelOther;
+  const align = isSelf
+    ? styles.commentRowAlignEnd
+    : styles.commentRowAlignStart;
+
   return (
-    <View style={styles.comment}>
-      <Text style={styles.commentBody}>{comment.content}</Text>
-      <Text style={styles.commentTime}>
-        {formatRelativeTime(comment.createdAt)}
-      </Text>
+    <View style={[styles.commentRow, align]}>
+      <View style={[styles.commentBubble, tone]}>
+        <View style={styles.commentLabelRow}>
+          {isAdmin ? (
+            <Text style={[labelTone, styles.commentLabelIcon]}>🛡</Text>
+          ) : null}
+          <Text style={labelTone} numberOfLines={1}>
+            {label}
+          </Text>
+        </View>
+        <Text style={styles.commentBody}>{comment.content}</Text>
+        <Text style={styles.commentTime}>
+          {formatRelativeTime(comment.createdAt)}
+        </Text>
+      </View>
     </View>
   );
 }
@@ -518,6 +558,63 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#e5e5e5',
     gap: 4,
+  },
+  commentRow: {
+    flexDirection: 'row',
+    marginBottom: 12,
+  },
+  commentRowAlignStart: {
+    justifyContent: 'flex-start',
+  },
+  commentRowAlignEnd: {
+    justifyContent: 'flex-end',
+  },
+  commentBubble: {
+    maxWidth: '82%',
+    paddingHorizontal: 12,
+    paddingTop: 8,
+    paddingBottom: 10,
+    borderWidth: 1,
+    borderRadius: 10,
+    gap: 4,
+  },
+  commentBubbleSelf: {
+    backgroundColor: '#fff5e6',
+    borderColor: '#fdba74',
+  },
+  commentBubbleAdmin: {
+    backgroundColor: '#eff6ff',
+    borderColor: '#bfdbfe',
+  },
+  commentBubbleOther: {
+    backgroundColor: 'transparent',
+    borderColor: '#d4d4d8',
+  },
+  commentLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  commentLabelIcon: {
+    fontSize: 12,
+  },
+  commentLabelSelf: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#9a3412',
+    letterSpacing: 0.2,
+  },
+  commentLabelAdmin: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#1d4ed8',
+    letterSpacing: 0.2,
+  },
+  commentLabelOther: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#52525b',
+    letterSpacing: 0.2,
   },
   commentBody: {
     fontSize: 15,

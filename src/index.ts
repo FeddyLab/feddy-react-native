@@ -73,6 +73,7 @@ export type {
   AddCommentOptions,
   Attachment,
   Branding,
+  CommentAuthorKind,
   CommentList,
   ConfigureOptions,
   FeddyErrorCode,
