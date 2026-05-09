@@ -17,10 +17,15 @@ const FEDDY_API_KEY = process.env.EXPO_PUBLIC_FEDDY_API_KEY;
 // Hardcoded demo user — in a real app this comes from your auth layer.
 // Feddy never authenticates end users; it just records whatever identity
 // the host app already has.
+//
+// Each platform demo uses a distinct user identity so a tester running
+// the iOS / Flutter / RN sample apps side-by-side can verify the
+// comment-bubble visual distinction (self / other / admin). iOS uses
+// Alice Chen, Flutter uses Bob Park, RN uses Charlie Tan.
 const DEMO_USER = {
-  id: 'demo_user_1',
-  email: 'alice@example.com',
-  displayName: 'Alice Chen',
+  id: 'demo_user_charlie',
+  email: 'charlie@example.com',
+  displayName: 'Charlie Tan',
 };
 
 if (FEDDY_API_KEY) {
