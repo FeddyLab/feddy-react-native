@@ -213,8 +213,8 @@ export function RequestDetailContent({
             icon="✕"
             onPress={onClose}
             accessibilityLabel={t('action.close')}
-            variant="neutral"
-            fontSize={18}
+            circle
+            fontSize={16}
           />
         ) : (
           <View style={styles.toolbarSpacer} />
