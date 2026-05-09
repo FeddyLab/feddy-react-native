@@ -54,8 +54,6 @@ export interface RequestListViewProps {
   boards?: FeedbackBoard[];
 }
 
-type Screen = { kind: 'list' } | { kind: 'detail'; requestId: string };
-
 export function RequestListView({
   visible,
   onDismiss,
@@ -81,7 +79,7 @@ export function RequestListView({
     };
   }, [boardsProp]);
 
-  const [screen, setScreen] = useState<Screen>({ kind: 'list' });
+  const [detailRequestId, setDetailRequestId] = useState<string | null>(null);
   const [composeOpen, setComposeOpen] = useState(false);
   const [selectedBoardKey, setSelectedBoardKey] = useState<string | null>(null);
   const [items, setItems] = useState<FeedbackRequest[]>([]);
@@ -147,11 +145,11 @@ export function RequestListView({
 
   const hasLoadedRef = useRef(false);
   useEffect(() => {
-    if (visible && screen.kind === 'list' && !hasLoadedRef.current) {
+    if (visible && !hasLoadedRef.current) {
       hasLoadedRef.current = true;
       void loadInitial();
     }
-  }, [visible, screen.kind, loadInitial]);
+  }, [visible, loadInitial]);
 
   const loadMoreIfNeeded = useCallback(async () => {
     if (isLoadingMore || !nextCursor) return;
@@ -249,7 +247,6 @@ export function RequestListView({
   };
 
   const renderHeader = () => {
-    if (screen.kind === 'detail') return null;
     return (
       <View style={styles.toolbar}>
         <View style={styles.toolbarLeft}>
@@ -300,63 +297,69 @@ export function RequestListView({
       onRequestClose={onDismiss}
     >
       <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
-        {screen.kind === 'detail' ? (
-          <RequestDetailContent
-            requestId={screen.requestId}
-            onBack={() => setScreen({ kind: 'list' })}
+        {renderHeader()}
+        {isInitialLoading && items.length === 0 ? (
+          <LoadingFullScreen />
+        ) : loadError && items.length === 0 ? (
+          <ErrorState message={loadError} onRetry={() => void loadInitial()} />
+        ) : items.length === 0 ? (
+          <EmptyState
+            title={t('list.empty.title')}
+            body={t('list.empty.body')}
           />
         ) : (
-          <>
-            {renderHeader()}
-            {isInitialLoading && items.length === 0 ? (
-              <LoadingFullScreen />
-            ) : loadError && items.length === 0 ? (
-              <ErrorState
-                message={loadError}
-                onRetry={() => void loadInitial()}
-              />
-            ) : items.length === 0 ? (
-              <EmptyState
-                title={t('list.empty.title')}
-                body={t('list.empty.body')}
-              />
-            ) : (
-              <FlatList
-                data={items}
-                keyExtractor={(r) => r.id}
-                renderItem={({ item }) => (
-                  <RequestRow
-                    request={item}
-                    boardName={boardName(item.boardKey)}
-                    voteOverlay={voteOverlays.get(item.id)}
-                    voted={votedIds.has(item.id)}
-                    votePending={pendingVoteIds.has(item.id)}
-                    showStatusChip
-                    onPress={() =>
-                      setScreen({ kind: 'detail', requestId: item.id })
-                    }
-                    onVote={() => handleVoteTap(item)}
-                  />
-                )}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={isRefreshing}
-                    onRefresh={() => {
-                      void loadInitial(true);
-                    }}
-                  />
-                }
-                onEndReached={() => {
-                  void loadMoreIfNeeded();
-                }}
-                onEndReachedThreshold={0.5}
-                ListFooterComponent={isLoadingMore ? <LoadingFooter /> : null}
+          <FlatList
+            data={items}
+            keyExtractor={(r) => r.id}
+            renderItem={({ item }) => (
+              <RequestRow
+                request={item}
+                boardName={boardName(item.boardKey)}
+                voteOverlay={voteOverlays.get(item.id)}
+                voted={votedIds.has(item.id)}
+                votePending={pendingVoteIds.has(item.id)}
+                showStatusChip
+                onPress={() => setDetailRequestId(item.id)}
+                onVote={() => handleVoteTap(item)}
               />
             )}
-            <PoweredByBadge />
-          </>
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefreshing}
+                onRefresh={() => {
+                  void loadInitial(true);
+                }}
+              />
+            }
+            onEndReached={() => {
+              void loadMoreIfNeeded();
+            }}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={isLoadingMore ? <LoadingFooter /> : null}
+          />
         )}
+        <PoweredByBadge />
       </SafeAreaView>
+
+      {/* Stacked sheet for detail — iOS layers a second pageSheet on
+          top of the list with a built-in slide-in animation and the
+          standard pull-to-dismiss gesture, so we don't have to draw
+          our own back-button chrome. */}
+      <Modal
+        visible={detailRequestId != null}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setDetailRequestId(null)}
+      >
+        <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+          {detailRequestId != null && (
+            <RequestDetailContent
+              requestId={detailRequestId}
+              onClose={() => setDetailRequestId(null)}
+            />
+          )}
+        </SafeAreaView>
+      </Modal>
 
       <Modal
         visible={filterMenuOpen}

@@ -42,8 +42,6 @@ export interface RoadmapViewProps {
   boards?: FeedbackBoard[];
 }
 
-type Screen = { kind: 'roadmap' } | { kind: 'detail'; requestId: string };
-
 interface TabState {
   items: FeedbackRequest[];
   nextCursor: string | null;
@@ -93,7 +91,7 @@ export function RoadmapView({
     };
   }, [boardsProp]);
 
-  const [screen, setScreen] = useState<Screen>({ kind: 'roadmap' });
+  const [detailRequestId, setDetailRequestId] = useState<string | null>(null);
   const [composeOpen, setComposeOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<RoadmapStatus>('planned');
   const [tabs, setTabs] = useState<Record<RoadmapStatus, TabState>>(() => ({
@@ -168,13 +166,13 @@ export function RoadmapView({
   tabsRef.current = tabs;
 
   useEffect(() => {
-    if (visible && screen.kind === 'roadmap') {
+    if (visible) {
       const tab = tabsRef.current[activeTab];
       if (tab.items.length === 0 && tab.loadError == null) {
         void loadInitial(activeTab);
       }
     }
-  }, [visible, activeTab, screen.kind, loadInitial]);
+  }, [visible, activeTab, loadInitial]);
 
   const loadMore = useCallback(
     async (status: RoadmapStatus) => {
@@ -291,120 +289,126 @@ export function RoadmapView({
       onRequestClose={onDismiss}
     >
       <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
-        {screen.kind === 'detail' ? (
-          <RequestDetailContent
-            requestId={screen.requestId}
-            onBack={() => setScreen({ kind: 'roadmap' })}
+        <View style={styles.toolbar}>
+          <View style={styles.toolbarSide}>
+            <IconButton
+              icon="✕"
+              onPress={onDismiss}
+              accessibilityLabel={t('action.close')}
+              circle
+              fontSize={16}
+            />
+          </View>
+          <Text
+            style={styles.toolbarTitle}
+            numberOfLines={1}
+            pointerEvents="none"
+          >
+            {t('roadmap.title')}
+          </Text>
+          <View style={styles.toolbarSide}>
+            <IconButton
+              icon="＋"
+              onPress={() => setComposeOpen(true)}
+              accessibilityLabel={t('compose.title')}
+              circle
+              fontSize={20}
+            />
+          </View>
+        </View>
+
+        <View style={styles.segmentedRow}>
+          {TABS.map((status) => {
+            const isActive = status === activeTab;
+            return (
+              <Pressable
+                key={status}
+                onPress={() => setActiveTab(status)}
+                style={({ pressed }) => [
+                  styles.segment,
+                  isActive && styles.segmentActive,
+                  pressed && !isActive && styles.segmentPressed,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.segmentText,
+                    isActive && styles.segmentTextActive,
+                  ]}
+                >
+                  {statusLabel(status)}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+
+        {tab.isInitialLoading && tab.items.length === 0 ? (
+          <LoadingFullScreen />
+        ) : tab.loadError && tab.items.length === 0 ? (
+          <ErrorState
+            message={tab.loadError}
+            onRetry={() => void loadInitial(activeTab)}
+          />
+        ) : tab.items.length === 0 ? (
+          <EmptyState
+            title={t('roadmap.empty.titleFormat', {
+              status: statusLabel(activeTab).toLowerCase(),
+            })}
+            body={t('roadmap.empty.body')}
           />
         ) : (
-          <>
-            <View style={styles.toolbar}>
-              <View style={styles.toolbarSide}>
-                <IconButton
-                  icon="✕"
-                  onPress={onDismiss}
-                  accessibilityLabel={t('action.close')}
-                  circle
-                  fontSize={16}
-                />
-              </View>
-              <Text
-                style={styles.toolbarTitle}
-                numberOfLines={1}
-                pointerEvents="none"
-              >
-                {t('roadmap.title')}
-              </Text>
-              <View style={styles.toolbarSide}>
-                <IconButton
-                  icon="＋"
-                  onPress={() => setComposeOpen(true)}
-                  accessibilityLabel={t('compose.title')}
-                  circle
-                  fontSize={20}
-                />
-              </View>
-            </View>
-
-            <View style={styles.segmentedRow}>
-              {TABS.map((status) => {
-                const isActive = status === activeTab;
-                return (
-                  <Pressable
-                    key={status}
-                    onPress={() => setActiveTab(status)}
-                    style={({ pressed }) => [
-                      styles.segment,
-                      isActive && styles.segmentActive,
-                      pressed && !isActive && styles.segmentPressed,
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.segmentText,
-                        isActive && styles.segmentTextActive,
-                      ]}
-                    >
-                      {statusLabel(status)}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-
-            {tab.isInitialLoading && tab.items.length === 0 ? (
-              <LoadingFullScreen />
-            ) : tab.loadError && tab.items.length === 0 ? (
-              <ErrorState
-                message={tab.loadError}
-                onRetry={() => void loadInitial(activeTab)}
-              />
-            ) : tab.items.length === 0 ? (
-              <EmptyState
-                title={t('roadmap.empty.titleFormat', {
-                  status: statusLabel(activeTab).toLowerCase(),
-                })}
-                body={t('roadmap.empty.body')}
-              />
-            ) : (
-              <FlatList
-                data={tab.items}
-                keyExtractor={(r) => r.id}
-                renderItem={({ item }) => (
-                  <RequestRow
-                    request={item}
-                    boardName={boardName(item.boardKey)}
-                    voteOverlay={tab.voteOverlays.get(item.id)}
-                    voted={tab.votedIds.has(item.id)}
-                    votePending={tab.pendingVoteIds.has(item.id)}
-                    showStatusChip={false}
-                    onPress={() =>
-                      setScreen({ kind: 'detail', requestId: item.id })
-                    }
-                    onVote={() => handleVoteTap(item)}
-                  />
-                )}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={tab.isRefreshing}
-                    onRefresh={() => {
-                      void loadInitial(activeTab, true);
-                    }}
-                  />
-                }
-                onEndReached={() => {
-                  void loadMore(activeTab);
-                }}
-                onEndReachedThreshold={0.5}
-                ListFooterComponent={
-                  tab.isLoadingMore ? <LoadingFooter /> : null
-                }
+          <FlatList
+            data={tab.items}
+            keyExtractor={(r) => r.id}
+            renderItem={({ item }) => (
+              <RequestRow
+                request={item}
+                boardName={boardName(item.boardKey)}
+                voteOverlay={tab.voteOverlays.get(item.id)}
+                voted={tab.votedIds.has(item.id)}
+                votePending={tab.pendingVoteIds.has(item.id)}
+                showStatusChip={false}
+                onPress={() => setDetailRequestId(item.id)}
+                onVote={() => handleVoteTap(item)}
               />
             )}
-            <PoweredByBadge />
-          </>
+            refreshControl={
+              <RefreshControl
+                refreshing={tab.isRefreshing}
+                onRefresh={() => {
+                  void loadInitial(activeTab, true);
+                }}
+              />
+            }
+            onEndReached={() => {
+              void loadMore(activeTab);
+            }}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={tab.isLoadingMore ? <LoadingFooter /> : null}
+          />
         )}
+        <PoweredByBadge />
       </SafeAreaView>
+
+      {/* Stacked sheet for detail — same idiom as RequestListView so
+          a row tap slides the detail in over the roadmap, with iOS's
+          native pull-to-dismiss instead of a custom back button. */}
+      <Modal
+        visible={detailRequestId != null}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setDetailRequestId(null)}
+      >
+        <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+          {detailRequestId != null && (
+            <RequestDetailContent
+              requestId={detailRequestId}
+              onClose={() => setDetailRequestId(null)}
+            />
+          )}
+        </SafeAreaView>
+      </Modal>
 
       <FeedbackComposeView
         visible={composeOpen}
