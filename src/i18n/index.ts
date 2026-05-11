@@ -3,32 +3,60 @@ import en from './en.json';
 import es from './es.json';
 import fr from './fr.json';
 import ja from './ja.json';
+import zhHans from './zh-Hans.json';
+import zhHant from './zh-Hant.json';
 
-export type Locale = 'en' | 'es' | 'ja' | 'de' | 'fr';
+export type Locale = 'en' | 'zh-Hans' | 'zh-Hant' | 'es' | 'ja' | 'de' | 'fr';
 
 type Catalog = Record<string, string>;
 
 const catalogs: Record<Locale, Catalog> = {
   en,
+  'zh-Hans': zhHans,
+  'zh-Hant': zhHant,
   es,
   ja,
   de,
   fr,
 };
 
+interface ExpoLocale {
+  languageCode?: string | null;
+  languageTag?: string | null;
+  regionCode?: string | null;
+  languageScriptCode?: string | null;
+}
+
 interface ExpoLocalizationModule {
-  getLocales: () => Array<{ languageCode?: string | null }>;
+  getLocales: () => ExpoLocale[];
 }
 
 let resolvedLocale: Locale | null = null;
+
+function resolveChineseVariant(loc: ExpoLocale): Locale {
+  const tag = loc.languageTag?.toLowerCase() ?? '';
+  if (tag.startsWith('zh-hans')) return 'zh-Hans';
+  if (tag.startsWith('zh-hant')) return 'zh-Hant';
+
+  const script = loc.languageScriptCode;
+  if (script === 'Hans') return 'zh-Hans';
+  if (script === 'Hant') return 'zh-Hant';
+
+  const region = loc.regionCode?.toUpperCase();
+  if (region === 'TW' || region === 'HK' || region === 'MO') return 'zh-Hant';
+  return 'zh-Hans';
+}
 
 function detectLocale(): Locale {
   try {
     const localization = require('expo-localization') as ExpoLocalizationModule;
     if (localization?.getLocales) {
-      const locales = localization.getLocales();
-      const lang = locales?.[0]?.languageCode?.toLowerCase();
-      if (lang && lang in catalogs) return lang as Locale;
+      const first = localization.getLocales()?.[0];
+      if (first) {
+        const lang = first.languageCode?.toLowerCase();
+        if (lang === 'zh') return resolveChineseVariant(first);
+        if (lang && lang in catalogs) return lang as Locale;
+      }
     }
   } catch {
     // expo-localization not installed; fall through to en

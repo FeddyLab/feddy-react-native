@@ -22,7 +22,7 @@ npx expo install \
 | Optional module | Powers |
 |---|---|
 | `expo-application` / `expo-device` | App ID / version / device telemetry headers |
-| `expo-localization` | Auto-detect device locale (en / es / ja / de / fr) |
+| `expo-localization` | Auto-detect device locale (en / zh-Hans / zh-Hant / es / ja / de / fr) |
 | `expo-image-picker` / `expo-image-manipulator` | Image attachments on feedback submissions |
 | `expo-store-review` | Native App Store / Play Store review prompt after the user confirms |
 | `expo-iap` | Auto-detect the user's active subscription via StoreKit 2 / Play Billing |
@@ -214,7 +214,7 @@ Manual override always wins over the auto-detected snapshot. Both persist across
 
 ### Custom Boards & i18n
 
-The two SDK-shipped system boards (`features` / `bugs`) come pre-translated in 5 locales (en / es / ja / de / fr) and are picked automatically based on the device locale. The bundled views fetch the workspace's full board set from `GET /v1/boards` (1 h cached) so any custom board you create in the dashboard appears without redeploying the app:
+The two SDK-shipped system boards (`features` / `bugs`) come pre-translated in 7 locales (en / zh-Hans / zh-Hant / es / ja / de / fr) and are picked automatically based on the device locale. The bundled views fetch the workspace's full board set from `GET /v1/boards` (1 h cached) so any custom board you create in the dashboard appears without redeploying the app:
 
 ```tsx
 <FeedbackComposeView visible={open} onDismiss={...} />   // boards fetched in the background
@@ -328,7 +328,7 @@ Render `<FeedbackComposeView />` / `<RequestDetailView />` / `<SmartReviewSheet 
 - **Image Attachments** — up to 3 photos per request, auto-compressed and uploaded directly to R2.
 - **Anonymous Fallback** — writes attribute correctly even before the host app calls `identify()`.
 - **Fire-and-Forget API** — no `try` / `await` boilerplate at the call site for state-mutating methods.
-- **Localized** — built-in `en / es / ja / de / fr` (auto-detected from device locale).
+- **Localized** — built-in `en / zh-Hans / zh-Hant / es / ja / de / fr` (auto-detected from device locale).
 - **Type-Safe** — full TypeScript declarations bundled, strict-mode safe.
 
 ## License
