@@ -1,10 +1,21 @@
 export interface SmartReviewSheetState {
   visible: boolean;
-  onRated?: (stars: number) => void;
-  onCancel?: () => void;
+  onLiked?: () => void;
+  onDisliked?: () => void;
+  onStoreConfirmed?: () => void;
+  onStoreDismissed?: () => void;
+  onSheetDismissedBeforeChoice?: () => void;
 }
 
 type Listener = (state: SmartReviewSheetState) => void;
+
+export interface OpenArgs {
+  onLiked: () => void;
+  onDisliked: () => void;
+  onStoreConfirmed: () => void;
+  onStoreDismissed: () => void;
+  onSheetDismissedBeforeChoice: () => void;
+}
 
 class SmartReviewUIStateStore {
   private state: SmartReviewSheetState = { visible: false };
@@ -21,12 +32,8 @@ class SmartReviewUIStateStore {
     };
   }
 
-  open(args: { onRated: (stars: number) => void; onCancel: () => void }): void {
-    this.state = {
-      visible: true,
-      onRated: args.onRated,
-      onCancel: args.onCancel,
-    };
+  open(args: OpenArgs): void {
+    this.state = { visible: true, ...args };
     this.emit();
   }
 

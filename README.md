@@ -1,6 +1,6 @@
 # Feddy React Native SDK
 
-> **Beta Notice**: This SDK is currently in beta (v0.2.0). The API may change before the 1.0 release.
+> **Beta Notice**: This SDK is currently in beta (v0.2.1). The API may change before the 1.0 release.
 
 A React Native SDK for integrating [Feddy](https://feddy.app) feedback, roadmap, and Smart Review into your iOS and Android apps. Pure JavaScript with optional Expo modules — no custom native bridges, Expo Go compatible.
 
@@ -24,7 +24,7 @@ npx expo install \
 | `expo-application` / `expo-device` | App ID / version / device telemetry headers |
 | `expo-localization` | Auto-detect device locale (en / es / ja / de / fr) |
 | `expo-image-picker` / `expo-image-manipulator` | Image attachments on feedback submissions |
-| `expo-store-review` | Native App Store / Play Store review prompt for 4-5 star ratings |
+| `expo-store-review` | Native App Store / Play Store review prompt after the user confirms |
 | `expo-iap` | Auto-detect the user's active subscription via StoreKit 2 / Play Billing |
 
 ## Quick Start
@@ -128,7 +128,7 @@ Both views are full-screen modals with built-in pagination, pull-to-refresh, vot
 
 ### 5. Smart Review
 
-Call `Feddy.requestReviewIfAppropriate()` from any "user just had a good moment" hook. The SDK applies install-age / session-count / cooldown / yearly-cap gates server-side and locally. If they pass, a 5-star pre-prompt sheet appears; ≥4 stars triggers the system review prompt, ≤3 stars opens the compose modal so the feedback is captured privately instead of as a public 1-3 star App Store review.
+Call `Feddy.requestReviewIfAppropriate()` from any "user just had a good moment" hook. The SDK applies install-age / session-count / cooldown / yearly-cap gates server-side and locally. If they pass, a two-step sheet appears: step one asks whether the user is enjoying the app, step two confirms before invoking the system review prompt. A negative answer in step one routes straight to the compose modal so the feedback is captured privately instead of as a public 1-star App Store review.
 
 ```ts
 Feddy.requestReviewIfAppropriate({
@@ -324,7 +324,7 @@ Render `<FeedbackComposeView />` / `<RequestDetailView />` / `<SmartReviewSheet 
 - **Cross-Platform** — iOS and Android from one codebase. Expo Go compatible.
 - **No Custom Native Bridges** — pure JavaScript with optional Expo modules. No Pod install, no Gradle config required.
 - **Drop-in Views** — `<RequestListView />`, `<RoadmapView />`, `<RequestDetailView />` with pagination, voting, and comments built in.
-- **Smart Review** — turn 4-5 star moments into App Store reviews and 1-3 star moments into private feedback.
+- **Smart Review** — route happy users to the App Store and unhappy users to a private feedback form.
 - **Image Attachments** — up to 3 photos per request, auto-compressed and uploaded directly to R2.
 - **Anonymous Fallback** — writes attribute correctly even before the host app calls `identify()`.
 - **Fire-and-Forget API** — no `try` / `await` boilerplate at the call site for state-mutating methods.

@@ -46,9 +46,14 @@
   "roadmap.empty.titleFormat": "Noch keine {status}-Einträge",
   "roadmap.empty.body": "Schau bald wieder rein — wir aktualisieren die Roadmap, sobald wir Fortschritte machen.",
 
-  "smartReview.title": "Gefällt dir die App?",
-  "smartReview.subtitle": "Tippe einen Stern, um deine Erfahrung zu teilen.",
-  "smartReview.star.a11y": "{n} von 5 Sternen bewerten",
+  "smartReview.step1.title": "Gefällt dir die App?",
+  "smartReview.step1.subtitle": "Deine ehrliche Meinung hilft uns weiter.",
+  "smartReview.step1.like": "Mir gefällt sie",
+  "smartReview.step1.dislike": "Nicht wirklich",
+  "smartReview.step2.title": "Magst du uns im App Store bewerten?",
+  "smartReview.step2.subtitle": "Dauert nur einen Moment.",
+  "smartReview.step2.confirm": "Klar",
+  "smartReview.step2.dismiss": "Nicht jetzt",
 
   "status.planned": "Geplant",
   "status.in_progress": "In Bearbeitung",

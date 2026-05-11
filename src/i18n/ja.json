@@ -46,9 +46,14 @@
   "roadmap.empty.titleFormat": "{status}の項目はまだありません",
   "roadmap.empty.body": "進捗に応じてロードマップを更新します。後ほどご確認ください。",
 
-  "smartReview.title": "アプリは気に入りましたか?",
-  "smartReview.subtitle": "星をタップして体験を共有してください。",
-  "smartReview.star.a11y": "5段階中{n}と評価",
+  "smartReview.step1.title": "アプリは気に入りましたか？",
+  "smartReview.step1.subtitle": "率直なご意見が今後の改善につながります。",
+  "smartReview.step1.like": "気に入ってる",
+  "smartReview.step1.dislike": "あまり…",
+  "smartReview.step2.title": "App Store で評価していただけますか？",
+  "smartReview.step2.subtitle": "ほんの一瞬で終わります。",
+  "smartReview.step2.confirm": "もちろん",
+  "smartReview.step2.dismiss": "今はしない",
 
   "status.planned": "予定",
   "status.in_progress": "進行中",

@@ -46,9 +46,14 @@
   "roadmap.empty.titleFormat": "No {status} items yet",
   "roadmap.empty.body": "Check back soon — we'll update the roadmap as work progresses.",
 
-  "smartReview.title": "Enjoying the app?",
-  "smartReview.subtitle": "Tap a star to share your experience.",
-  "smartReview.star.a11y": "Rate {n} of 5 stars",
+  "smartReview.step1.title": "Enjoying the app?",
+  "smartReview.step1.subtitle": "Your honest take helps shape what we build next.",
+  "smartReview.step1.like": "I like it",
+  "smartReview.step1.dislike": "Not really",
+  "smartReview.step2.title": "Mind rating us on the App Store?",
+  "smartReview.step2.subtitle": "It only takes a moment.",
+  "smartReview.step2.confirm": "Sure",
+  "smartReview.step2.dismiss": "Not now",
 
   "status.planned": "Planned",
   "status.in_progress": "In Progress",

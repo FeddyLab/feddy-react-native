@@ -3,13 +3,15 @@ import { getAnonymousToken, getLastExternalUserId } from '../identity';
 
 export type ReviewPromptEventStage =
   | 'shown'
-  | 'rated'
+  | 'liked'
+  | 'disliked'
   | 'routed_store'
-  | 'routed_feedback';
+  | 'routed_feedback'
+  | 'dismissed_store_confirm'
+  | 'dismissed';
 
 export interface LogEventArgs {
   stage: ReviewPromptEventStage;
-  rating?: number;
   trigger?: string;
 }
 
@@ -28,7 +30,6 @@ export function logEvent(client: FeddyClient, args: LogEventArgs): void {
         external_user_id: externalUserId ?? undefined,
         anonymous_token: anonymousToken,
         stage: args.stage,
-        rating: args.rating,
         trigger: args.trigger,
       });
     } catch (err) {

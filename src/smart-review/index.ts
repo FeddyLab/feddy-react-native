@@ -8,7 +8,7 @@ import { smartReviewUIState } from './ui-state';
 
 export interface RequestReviewOptions {
   /**
-   * Which dashboard board the low-rating capture lands in (≤3 stars).
+   * Which dashboard board the dislike-path capture lands in.
    * Same semantics as `boardKey` on `Feddy.submitRequest(...)`.
    */
   boardKey?: string;
@@ -47,17 +47,42 @@ function loadStoreReview(): ExpoStoreReviewModule | null {
   }
 }
 
+function invokeStoreReview(): void {
+  const sr = loadStoreReview();
+  if (!sr) {
+    console.warn(
+      '[Feddy] expo-store-review peer dep not installed — skipping native review prompt'
+    );
+    return;
+  }
+  void (async () => {
+    try {
+      const available = await sr.isAvailableAsync();
+      if (available) {
+        await sr.requestReview();
+      } else {
+        console.warn('[Feddy] expo-store-review not available on this device');
+      }
+    } catch (err) {
+      console.error(
+        '[Feddy] expo-store-review failed —',
+        err instanceof Error ? err.message : err
+      );
+    }
+  })();
+}
+
 /**
  * Imperative entry point for `Feddy.requestReviewIfAppropriate(...)`.
  *
  * 1. Run gates against persisted state and config-fetched rules.
  * 2. If gated out → log the skip reason, return.
  * 3. If show → mark shown, log 'shown', present sheet.
- * 4. Sheet 4-5 stars → log 'rated' + 'routed_store', invoke
- *    `expo-store-review.requestReview()` if installed.
- * 5. Sheet 1-3 stars → log 'rated' + 'routed_feedback', open compose
- *    (so private capture replaces a public 1-3 star App Store review).
- * 6. Cancel → silent dismiss.
+ * 4. Step 1 like → step 2 confirmation → expo-store-review on confirm.
+ *    Step 2 dismiss does not invoke store review.
+ * 5. Step 1 dislike → open compose (the review shield, so private
+ *    capture replaces a public 1-star App Store review).
+ * 6. Drag-away on step 1 → silent dismiss (logged for funnel only).
  */
 export async function requestReviewIfAppropriate(
   opts: RequestReviewOptions = {}
@@ -89,47 +114,30 @@ export async function requestReviewIfAppropriate(
   logEvent(client, { stage: 'shown', trigger });
 
   smartReviewUIState.open({
-    onRated: (stars) => {
-      smartReviewUIState.close();
-      logEvent(client, { stage: 'rated', rating: stars, trigger });
-      if (stars >= 4) {
-        logEvent(client, { stage: 'routed_store', rating: stars, trigger });
-        const sr = loadStoreReview();
-        if (sr) {
-          void (async () => {
-            try {
-              const available = await sr.isAvailableAsync();
-              if (available) {
-                await sr.requestReview();
-              } else {
-                console.warn(
-                  '[Feddy] expo-store-review not available on this device'
-                );
-              }
-            } catch (err) {
-              console.error(
-                '[Feddy] expo-store-review failed —',
-                err instanceof Error ? err.message : err
-              );
-            }
-          })();
-        } else {
-          console.warn(
-            '[Feddy] expo-store-review peer dep not installed — skipping native review prompt'
-          );
-        }
-      } else {
-        logEvent(client, {
-          stage: 'routed_feedback',
-          rating: stars,
-          trigger,
-        });
-        uiState.open({ boardKey: opts.boardKey });
-      }
+    onLiked: () => {
+      // Non-terminal: sheet stays open and transitions to step 2.
+      logEvent(client, { stage: 'liked', trigger });
     },
-    onCancel: () => {
+    onDisliked: () => {
       smartReviewUIState.close();
-      // No event logged — sheet was dismissed without a rating.
+      logEvent(client, { stage: 'disliked', trigger });
+      logEvent(client, { stage: 'routed_feedback', trigger });
+      uiState.open({ boardKey: opts.boardKey });
+    },
+    onStoreConfirmed: () => {
+      smartReviewUIState.close();
+      logEvent(client, { stage: 'routed_store', trigger });
+      invokeStoreReview();
+    },
+    onStoreDismissed: () => {
+      // User reached step 2 but declined to rate. The earlier `liked`
+      // engagement is already recorded; just log the funnel terminus.
+      smartReviewUIState.close();
+      logEvent(client, { stage: 'dismissed_store_confirm', trigger });
+    },
+    onSheetDismissedBeforeChoice: () => {
+      smartReviewUIState.close();
+      logEvent(client, { stage: 'dismissed', trigger });
     },
   });
 }
