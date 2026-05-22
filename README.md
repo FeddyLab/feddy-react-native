@@ -1,6 +1,6 @@
 # Feddy React Native SDK
 
-> **Beta Notice**: This SDK is currently in beta (v0.2.1). The API may change before the 1.0 release.
+> **Beta Notice**: This SDK is currently in beta (0.2.2). The API may change before the 1.0 release.
 
 A React Native SDK for integrating [Feddy](https://feddy.app) feedback, roadmap, and Smart Review into your iOS and Android apps. Pure JavaScript with optional Expo modules — no custom native bridges, Expo Go compatible.
 
@@ -135,6 +135,16 @@ Feddy.requestReviewIfAppropriate({
   trigger: 'task_completed', // surfaces in your dashboard funnel
 });
 ```
+
+For moments where you've **already decided** the user is happy — typically the instant a paywall purchase completes — bypass the shield and invoke the native review prompt immediately:
+
+```ts
+Feddy.requestSystemReviewDirect({
+  trigger: 'paywall_purchase_success',
+});
+```
+
+No SDK gates (Apple / Google opaque per-app yearly caps still apply). No private feedback fallback. Reports `stage = "system_direct"` to the dashboard funnel so you can compare conversion against shield-flow triggers.
 
 ### 6. App Lifecycle (Expo Router)
 

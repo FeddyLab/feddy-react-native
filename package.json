@@ -1,6 +1,6 @@
 {
   "name": "@feddyapp/react-native",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "React Native SDK for Feddy — feedback infrastructure for mobile apps",
   "main": "dist/index.js",
   "module": "dist/index.js",

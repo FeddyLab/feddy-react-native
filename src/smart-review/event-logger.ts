@@ -8,7 +8,8 @@ export type ReviewPromptEventStage =
   | 'routed_store'
   | 'routed_feedback'
   | 'dismissed_store_confirm'
-  | 'dismissed';
+  | 'dismissed'
+  | 'system_direct';
 
 export interface LogEventArgs {
   stage: ReviewPromptEventStage;

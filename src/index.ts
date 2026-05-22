@@ -11,7 +11,10 @@ import {
   setLastExternalUserId,
 } from './identity';
 import { getCurrentClient, setCurrentClient } from './runtime';
-import type { RequestReviewOptions } from './smart-review';
+import type {
+  RequestReviewOptions,
+  RequestSystemReviewDirectOptions,
+} from './smart-review';
 import * as smartReview from './smart-review';
 import { clearQueue, enqueueSubmit, replayQueue } from './submit-queue';
 import {
@@ -67,7 +70,10 @@ export {
 export type { RoadmapViewProps } from './components/RoadmapView';
 export { RoadmapView } from './components/RoadmapView';
 export { SmartReviewSheet } from './components/SmartReviewSheet';
-export type { RequestReviewOptions } from './smart-review';
+export type {
+  RequestReviewOptions,
+  RequestSystemReviewDirectOptions,
+} from './smart-review';
 export type { BoardTranslations } from './system-boards';
 export type {
   AddCommentOptions,
@@ -486,6 +492,27 @@ export const Feddy = {
   requestReviewIfAppropriate(opts: RequestReviewOptions = {}): void {
     void smartReview.requestReviewIfAppropriate(opts).catch((err) => {
       logError('requestReviewIfAppropriate', err);
+    });
+  },
+
+  /**
+   * Bypass the Smart Review shield and invoke
+   * `expo-store-review.requestReview()` immediately. Use only for
+   * moments where the host has already established positive
+   * sentiment (e.g. immediately after a paywall purchase succeeds).
+   *
+   * No SDK gates (Apple / Google opaque per-app yearly caps still
+   * apply). No private feedback fallback. Reports
+   * `stage = "system_direct"` to the dashboard funnel with the
+   * supplied trigger so the host can compare conversion against
+   * shield-flow triggers.
+   *
+   * Fire-and-forget: returns immediately. No-op if `configure` has
+   * not yet been called.
+   */
+  requestSystemReviewDirect(opts: RequestSystemReviewDirectOptions = {}): void {
+    void smartReview.requestSystemReviewDirect(opts).catch((err) => {
+      logError('requestSystemReviewDirect', err);
     });
   },
 

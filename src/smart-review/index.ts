@@ -148,3 +148,5 @@ export async function resetSmartReviewState(): Promise<void> {
 }
 
 export { bumpSession } from './store';
+export type { RequestSystemReviewDirectOptions } from './system-direct';
+export { requestSystemReviewDirect } from './system-direct';
